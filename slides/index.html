@@ -5,7 +5,7 @@
 
     <title>Building A Dynamic Security Reponse Environment</title>
 
-    <meta name="description" content="Strangeloop 2015 Workshop">
+    <meta name="description" content="Workshop">
     <meta name="author" content="Aaron Bedra">
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -37,12 +37,12 @@
     <div class="reveal">
       <div class="slides">
         <section>
-          <h1>Strangeloop 2015</h1>
+          <h1>Codemash 2017</h1>
           <h3>Building A Dynamic Security Response Environment</h3>
           <p>
             <small>
-              Created by Aaron Bedra / <a href="http://twitter.com/abedra">@abedra</a><br/>
-              Principal Engineer, Groupon
+              Created by Aaron Bedra / <a href="https://twitter.com/abedra">@abedra</a><br/>
+              Chief Security Officer, <a href="https://eligible.com">Eligible</a>
             </small>
           </p>
         </section>
@@ -248,7 +248,7 @@ $ tail -f logs/app.log
 	  <h2>Putting the app behind NGINX</h2>
 	  <pre>
 	    <code data-trim class="conf">
-# In repsheet/repsheet-nginx-3.1.3/nginx.conf
+# In repsheet/repsheet-nginx-4.3.0/nginx.conf
 # http section
 upstream app {
   server localhost:8080;
@@ -266,7 +266,7 @@ location / {
 	  <h2>Reload the NGINX config and try against the NGINX port</h2>
 	  <pre>
 	    <code data-trim class="nohighlight">
-$ cd repsheet/repsheet-nginx-3.1.3
+$ cd repsheet/repsheet-nginx-4.3.0
 $ build/nginx/sbin/nginx
 $ curl localhost:8888 # You should see app output
 	    </code>
@@ -314,7 +314,7 @@ $ curl localhost:8888 # Normal app output
 	  <h2>Let's take a look at the logs</h2>
 	  <pre>
 	    <code data-trim class="nohighlight">
-$ cd repsheet/repsheet-nginx-3.1.3
+$ cd repsheet/repsheet-nginx-4.3.0
 $ tail build/nginx/logs/error.log
 2015/09/22 14:53:01 [error] 58985#0: *4 [Repsheet] - IP 127.0.0.1
   was blocked by repsheet. Reason: manual, client: 127.0.0.1,
@@ -343,7 +343,7 @@ $ curl localhost:8888 # you should see the normal response
 	  <h2>But under the hood</h2>
 	  <pre>
 	    <code data-trim class="nohighlight">
-$ cd repsheet/repsheet-nginx-3.1.3
+$ cd repsheet/repsheet-nginx-4.3.0
 $ tail build/nginx/logs/error.log
 2015/09/22 16:16:34 [error] 58985#0: *21 [Repsheet] - IP 127.0.0.1
   was found on repsheet. No action taken, client: 127.0.0.1, server: ,
@@ -393,7 +393,7 @@ func repsheetHandler(next http.Handler) http.Handler {
 	  <h2>Example</h2>
 	  <pre>
 	    <code data-trim class="nohighlight">
-$ cd repsheet/repsheet-0.0.1
+$ cd repsheet/repsheet-0.0.2
 $ go build repsheeet.go
 $ ./repsheet -list
 blacklisted actors

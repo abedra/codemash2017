@@ -1,4 +1,4 @@
-# Building a Dynamic Security Response Environment (Strangeloop 2015 Workshop)
+# Building a Dynamic Security Response Environment
 
 This repository contains the slides and requisite material for the
 *Building a Dynamic Security Response Environment* workshop. The
