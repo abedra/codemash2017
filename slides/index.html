@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Building A Dynamic Security Reponse Environment</title>
+
+    <meta name="description" content="Strangeloop 2015 Workshop">
+    <meta name="author" content="Aaron Bedra">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h1>Strangeloop 2015</h1>
+          <h3>Building A Dynamic Security Response Environment</h3>
+          <p>
+            <small>
+              Created by Aaron Bedra / <a href="http://twitter.com/abedra">@abedra</a><br/>
+              Principal Engineer, Groupon
+            </small>
+          </p>
+        </section>
+
+        <section>
+          <h2>Agenda</h2>
+          <ul>
+            <li>Setup</li>
+            <li>Introduction to Repsheet</li>
+            <li>The Repsheet Environment</li>
+            <li>Building a Processor</li>
+            <li>Wrap-Up</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Setup</h2>
+        </section>
+
+	<section>
+	  <h2>Grab the dependencies</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ ./fetch_dependencies
+	    </code>
+	  </pre>
+	</section>
+
+        <section>
+          <h2>Build and install hiredis</h2>
+          <pre>
+            <code data-trim class="nohighlight">
+$ cd repsheet/hiredis-0.13.3
+$ make
+$ sudo PREFIX=/usr make install
+$ sudo ldconfig # if you are on linux
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h2>Build and install librepsheet</h2>
+          <pre>
+            <code data-trim class="nohighlight">
+$ cd repsheet/librepsheet-6.2.0
+$ ./autogen.sh
+$ ./configure --prefix=/usr
+$ make
+$ make check # all tests should pass
+$ sudo make install
+$ sudo ldconfig # if you are on linux
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h2>Build and install NGINX with the repsheet module</h2>
+          <pre>
+            <code data-trim class="nohighlight">
+$ cd repsheet/repsheet-nginx-4.3.0
+$ bundle # if you want to run the tests
+$ script/bootstrap
+$ rake # all tests should pass
+            </code>
+          </pre>
+        </section>
+
+	<section>
+	  <h2>Repsheet</h2>
+	</section>
+
+	<section>
+	  <h2>User behavior</h2>
+	</section>
+
+	<section data-background="casino.jpeg" data-background-size="1100px">
+
+	</section>
+
+	<section>
+	  <h2>Our web systems are not fortresses</h2>
+	</section>
+
+	<section>
+	  <h2>And our responses shouldn't be static</h2>
+	</section>
+
+	<section>
+	  <h2>Example</h2>
+	  <pre>
+	    <code data-trim class="conf">
+location / {
+  # block one workstation
+  deny    192.168.1.1;
+  # allow anyone in 192.168.1.0/24
+  allow   192.168.1.0/24;
+  # drop rest of the world
+  deny    all;
+}
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>This doesn't scale</h2>
+	</section>
+
+	<section>
+	  <h2>And it makes operations much harder</h2>
+	</section>
+
+	<section>
+	  <h2>It also doesn't allow you to change your response according to the actor's behavior</h2>
+	</section>
+
+	<section>
+	  <h2>Repsheet gives you more fluid options for dealing with bad actors</h2>
+	</section>
+
+	<section>
+	  <h2>How does it work?</h2>
+	</section>
+
+	<section data-background="repsheet.png" data-background-size="1024px">
+
+	</section>
+
+	<section>
+	  <h2>Components</h2>
+	  <ul>
+	    <li>hiredis (Redis C adapter)</li>
+	    <li>librepsheet (repsheet logic)</li>
+	    <li>NGINX (embedded module)</li>
+	  </ul>
+	</section>
+
+	<section>
+	  <h2>We will only focus on the NGINX module for this workshop</h2>
+	</section>
+
+	<section>
+	  <h2>Let's start with the configuration</h2>
+	</section>
+
+	<section>
+	  <h2>Options</h2>
+	  <pre>
+	    <code data-trim class="conf">
+repsheet on;                          # main or location conf
+repsheet_user_lookup on;              # main conf
+repsheet_ip_lookup on;                # main conf
+
+repsheet_redis_host localhost;        # main conf
+repsheet_redis_port 6379; # main conf
+repsheet_redis_connection_timeout 5;  # main conf
+repsheet_redis_read_timeout 10;       # main conf
+
+repsheet_proxy_headers on;            # main conf
+repsheet_user_cookie "user";          # main conf
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>A full configuration is provided in the repsheet-nginx repository</h2>
+	</section>
+
+	<section>
+	  <h2>A basic repsheet environment</h2>
+	</section>
+
+	<section>
+	  <h2>You can use your own application or the sample application provided</h2>
+	</section>
+
+	<section>
+	  <h2>Booting up the sample application</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd app
+$ go run app.go
+$ curl localhost:8080
+curl localhost:8080
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  ... elided ...
+&lt;/html&gt;
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Take a look at the log file</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ tail -f logs/app.log
+127.0.0.1 - - [22/Sep/2015:09:49:50 -0500] "GET / HTTP/1.1" 200 1400
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Putting the app behind NGINX</h2>
+	  <pre>
+	    <code data-trim class="conf">
+# In repsheet/repsheet-nginx-3.1.3/nginx.conf
+# http section
+upstream app {
+  server localhost:8080;
+}
+
+# server section
+location / {
+  proxy_pass http://app
+}
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Reload the NGINX config and try against the NGINX port</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd repsheet/repsheet-nginx-3.1.3
+$ build/nginx/sbin/nginx
+$ curl localhost:8888 # You should see app output
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Let's pretend we're malicious</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ redis-cli set 127.0.0.1:repsheet:ip:blacklisted manual
+OK
+            </code>
+	  </pre>
+        </section>
+
+	<section>
+	  <h2>We can see that things have changed</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ curl localhost:8888
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;403 Forbidden&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;403 Forbidden&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx/1.8.0&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>We can also change our mind</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ redis-cli set 127.0.0.1:repsheet:ip:whitelisted manual
+OK
+$ curl localhost:8888 # Normal app output
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Let's take a look at the logs</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd repsheet/repsheet-nginx-3.1.3
+$ tail build/nginx/logs/error.log
+2015/09/22 14:53:01 [error] 58985#0: *4 [Repsheet] - IP 127.0.0.1
+  was blocked by repsheet. Reason: manual, client: 127.0.0.1,
+  server: , request: "GET / HTTP/1.1", host: "localhost:8888"
+2015/09/22 14:53:04 [error] 58985#0: *4 [Repsheet] - IP 127.0.0.1
+  is whitelisted by repsheet. Reason: manual, client: 127.0.0.1,
+  server: , request: "GET / HTTP/1.1", host: "localhost:8888"
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>We can also be a little unsure</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ redis-cli flushdb
+OK
+$ redis-cli set 127.0.0.1:repsheet:ip:marked manual
+OK
+$ curl localhost:8888 # you should see the normal response
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>But under the hood</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd repsheet/repsheet-nginx-3.1.3
+$ tail build/nginx/logs/error.log
+2015/09/22 16:16:34 [error] 58985#0: *21 [Repsheet] - IP 127.0.0.1
+  was found on repsheet. No action taken, client: 127.0.0.1, server: ,
+  request: "GET / HTTP/1.1", host: "localhost:8888"
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>The repsheet module passes a header to the downstream applications indicating a marked actor</h2>
+	</section>
+
+	<section>
+	  <h2>example</h2>
+	  <pre>
+	    <code data-trim class="go">
+func repsheetHandler(next http.Handler) http.Handler {
+                return http.HandlerFunc(func(w http.ResponseWriter,
+                                             r *http.Request) {
+		if r.Header["X-Repsheet"] != nil {
+			context.Set(r, "repsheet", true)
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>If you look at the sample application you will notice a message indicating you are marked</h2>
+	</section>
+
+	<section>
+	  <h2>Obviously you wouldn't show that message directly</h2>
+	</section>
+
+	<section>
+	  <h2>Exercise: Make a better marked response</h2>
+	</section>
+
+	<section>
+	  <h2>There's also a repsheet command line tool</h2>
+	</section>
+
+	<section>
+	  <h2>Example</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd repsheet/repsheet-0.0.1
+$ go build repsheeet.go
+$ ./repsheet -list
+blacklisted actors
+whitelisted actors
+marked actors
+  127.0.0.1
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Use -h to see the capabilities</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ ./repsheet -h
+Usage of ./repsheet:
+  -blacklist="": Blacklist an actor
+  -host="localhost": Redis host
+  -list=false: Show the contents of Repsheet
+  -mark="": Mark an actor
+  -port=6379: Redis port
+  -reason="": Reason for the action
+  -status="": Get the status of an actor
+  -timeout=10: Redis connection timeout
+  -whitelist="": Whitelist an actor
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Everything you've done so far is all manual</h2>
+	</section>
+
+	<section>
+	  <h2>While that's still a big improvement, it lacks automation</h2>
+	</section>
+
+	<section>
+	  <h2>So let's build some!</h2>
+	</section>
+
+	<section>
+	  <h2>First, let's do a login attack</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ cd pester
+$ go build pester.go
+$ ./pester -host localhost -port 8888 -attack /
+Starting login attack on http://localhost:8888/
+The password is: P4$$w0rd!
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>This will generate enough log data to disect</h2>
+	</section>
+
+	<section>
+	  <h2>But you can also generate data from other ips</h2>
+	  <pre>
+	    <code data-trim class="nohighlight">
+$ ./pester -host localhost -port 8888 -attack / -from 1.1.1.1
+Starting login attack on http://localhost:8888/
+The password is: P4$$w0rd!
+	    </code>
+	  </pre>
+	</section>
+
+	<section>
+	  <h2>Exercise: write a log parser that detects login attacks and blacklists bad actors</h2>
+	</section>
+
+	<section>
+	  <h2>Wrap Up</h2>
+	</section>
+
+	<section>
+	  <h2>This is just the beginning</h2>
+	</section>
+
+	<section>
+	  <h2>In reality you need much more powerful detection capabilities</h2>
+	</section>
+
+	<section>
+	  <h2>This is a great place for the application of machine learning</h2>
+	</section>
+
+	<section>
+	  <h2>A note on scalability</h2>
+	</section>
+
+	<section>
+	  <h2>Where do you go from here?</h2>
+	</section>
+
+        <section style="text-align: left;">
+          <h1>Questions?</h1>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+  </body>
+</html>

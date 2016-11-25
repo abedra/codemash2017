@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+GREEN="\033[0;32m"
+RESET="\033[0;m"
+
+setup_local_directories() {
+    if [ ! -d "repsheet" ]; then
+        mkdir repsheet > /dev/null 2>&1
+    fi
+}
+
+fetch_hiredis() {
+    printf "Fetching hiredis ... "
+    pushd repsheet > /dev/null 2>&1
+    curl -s -O -L https://github.com/redis/hiredis/archive/v0.13.3.tar.gz
+    tar xzf v0.13.3.tar.gz
+    rm v0.13.3.tar.gz
+    popd > /dev/null 2>&1
+    printf "$GREEN[done]$RESET\n"
+}
+
+fetch_librepsheet() {
+    printf "Fetching libprepsheet ... "
+    pushd repsheet > /dev/null 2>&1
+    curl -s -O -L https://github.com/repsheet/librepsheet/archive/6.2.0.tar.gz
+    tar xzf 6.2.0.tar.gz
+    rm 6.2.0.tar.gz
+    popd > /dev/null 2>&1
+    printf "$GREEN[done]$RESET\n"
+}
+
+fetch_repsheet_nginx() {
+    printf "Fetching repsheet-nginx ... "
+    pushd repsheet > /dev/null 2>&1
+    curl -s -O -L https://github.com/repsheet/repsheet-nginx/archive/4.3.0.tar.gz
+    tar xzf 4.3.0.tar.gz
+    rm 4.3.0.tar.gz
+    popd > /dev/null 2>&1
+    printf "$GREEN[done]$RESET\n"
+}
+
+fetch_repsheet() {
+    printf "Fetching repsheet ... "
+    pushd repsheet > /dev/null 2>&1
+    curl -s -O -L https://github.com/repsheet/repsheet/archive/0.0.2.tar.gz
+    tar xzf 0.0.2.tar.gz
+    rm 0.0.2.tar.gz
+    popd > /dev/null 2>&1
+    printf "$GREEN[done]$RESET\n"
+}
+
+clean() {
+    rm -rf repsheet
+}
+
+if [[ "$#" -eq 1 ]]; then
+    if [[ "$1" == "clean" ]]; then
+        clean
+    fi
+else
+    setup_local_directories
+    fetch_hiredis
+    fetch_librepsheet
+    fetch_repsheet_nginx
+    fetch_repsheet
+fi
