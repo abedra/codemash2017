@@ -1,0 +1,6 @@
+[package]
+name = "processor"
+version = "0.0.1"
+authors = ["Aaron Bedra <aaron@aaronbedra.com>"]
+license = "Apache-2.0"
+description = "Processor example"
