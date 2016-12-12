@@ -65,7 +65,9 @@ This particular example was done on Ubuntu 14.04 server. Your
 experience may vary but it should be close.
 
 ```sh
-$ sudo apt-get install build-essential autoconf automake libtool pkgconfig redis-server check libpcre3-dev zlib1g-dev libcurl4-openssl-dev
+$ sudo apt-get install build-essential autoconf automake libtool
+  pkgconfig redis-server check libpcre3-dev zlib1g-dev
+  libcurl4-openssl-dev golang
 ```
 
 #### Rpm based systems (Redhat, Fedora, Centos, etc)
@@ -81,3 +83,23 @@ $ sudo yum update
 $ sudo yum install check check-devel redis pcre-devel zlib-devel curl-devel go
 $ sudo systemctl start redis
 ```
+
+#### Installing Ruby (only for running repsheet-nginx test suite)
+
+There are a few standard ways to install Ruby. If you don't have a
+preferred method and want to run the test suite you can
+try [RVM](https://rvm.io/rvm/install)
+or [rbenv](https://github.com/rbenv/rbenv).
+
+#### GO environment
+
+In order to run the examples in the workshop you will need to have a
+working go setup. If you do not already have a go environment setup
+you can use the `workshop_sources` file.
+
+```
+$ source workshop_sources
+```
+
+This will setup your `$GOPATH` inside of this workshop directory and
+modify your `$PATH` to support any binaries installed by `go get`.
