@@ -21,7 +21,7 @@ fn process(entries: &mut HashMap<String, i64>, line: &str) {
 }
 
 fn main() {
-    let path = Path::new("../../../app/logs/app.log");
+    let path = Path::new("../../app/logs/app.log");
     let file_handle = match File::open(&path) {
         Err(why) => {
             println!("Could not open {} : {}", path.display(), Error::description(&why));
