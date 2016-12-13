@@ -103,3 +103,12 @@ $ source workshop_sources
 
 This will setup your `$GOPATH` inside of this workshop directory and
 modify your `$PATH` to support any binaries installed by `go get`.
+
+#### Processor Examples
+
+During the course of the workshop you will be writing some code to
+parse application log files. Since everyone may not get complete this
+part of the workshop I have provided some examples in the `processors`
+folder. Each of the examples is in a folder named after the language
+it belongs to. There are individual README files in each folder that
+explain how to build and run the example.
