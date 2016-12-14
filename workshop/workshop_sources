@@ -1,3 +1,10 @@
 mkdir -p $(pwd)/go
 export GOPATH=$(pwd)/go
 export PATH=$PATH:$GOPATH/bin
+
+os=$(uname)
+if [[ "$os" == "Darwin" ]]; then
+   export C_INCLUDE_PATH=/usr/local/include
+   export CPLUS_INCLUDE_PATH=/usr/local/include
+   export LIBRARY_PATH=/usr/local/lib
+fi
