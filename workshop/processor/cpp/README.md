@@ -8,13 +8,15 @@ actors. It blacklists the actors in the Repsheet cache.
 #### apt based systems (Ubuntu and family)
 
 ```
-$ sudo apt-get install cmake libboost-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-date-time-dev libboost-regex-dev libboost-program-options-dev libmsgpack-dev
+$ sudo apt-get install cmake libboost-dev libboost-system-dev libboost-filesystem-dev
+  libboost-test-dev libboost-date-time-dev libboost-regex-dev libboost-program-options-dev
+  libmsgpack-dev
 ```
 
 #### rpm based systems (CentOS and family)
 
 ```
-$ yum install TODO
+$ sudo yum install cmake boost-devel msgpack-devel
 ```
 
 #### macOS

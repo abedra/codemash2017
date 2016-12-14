@@ -76,10 +76,8 @@ This particular example was done on Centos 7 minimal. Your experience
 may vary but it should be close.
 
 ```sh
-$ sudo yum groupinstall "Developer Tools"
-$ curl -O http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-$ sudo rpm -ivh epel-release-7-5.noarch.rpm
-$ sudo yum update
+$ sudo yum groupinstall "Developmentc Tools"
+$ sudo yum install epel-release
 $ sudo yum install check check-devel redis pcre-devel zlib-devel curl-devel go
 $ sudo systemctl start redis
 ```

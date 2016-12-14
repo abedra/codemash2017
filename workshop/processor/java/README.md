@@ -14,7 +14,7 @@ $ sudo apt-get install openjdk-8-jdk maven
 #### rpm based systems (CentOS and family)
 
 ```
-$ yum install TODO
+$ sudo yum install java-1.8.0-openjdk maven
 ```
 
 #### macOS

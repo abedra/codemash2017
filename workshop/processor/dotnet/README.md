@@ -7,7 +7,7 @@ actors. It blacklists the actors in the Repsheet cache.
 
 You will need to have .NET core installed on your machine. To install
 please follow
-the [setup instructions](https://www.microsoft.com/net/core#macos) for
+the [setup instructions](https://www.microsoft.com/net/core) for
 your machine.
 
 ## Build and Run

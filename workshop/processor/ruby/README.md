@@ -11,6 +11,7 @@ installed if it's not already available.
 
 ```
 $ gem install bundler
+$ bundle
 ```
 
 ## Build and Run
