@@ -56,7 +56,7 @@ Installing the requisite xcode develper tools will get you most of the
 dependencies listed above. Next run the following:
 
 ```sh
-$ brew install redis check go
+$ brew install redis check go automake autoconf libtool pkg-config pcre gpg
 ```
 
 #### Apt based systems (Debian, Ubuntu, etc)

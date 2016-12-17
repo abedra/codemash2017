@@ -19,8 +19,12 @@ $ sudo yum install java-1.8.0-openjdk maven
 
 #### macOS
 
+This example requires Java 8. You will need to download the installer
+from
+[Oracle's Website](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
 ```
-$ brew install TODO
+$ brew install maven
 ```
 
 ## Build and Run

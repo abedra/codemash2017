@@ -22,7 +22,7 @@ $ sudo yum install cmake boost-devel msgpack-devel
 #### macOS
 
 ```
-$ brew install TODO
+$ brew install cmake boost msgpack
 ```
 
 ## Build and Run
