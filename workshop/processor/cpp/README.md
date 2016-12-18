@@ -19,6 +19,12 @@ $ sudo apt-get install cmake libboost-dev libboost-system-dev libboost-filesyste
 $ sudo yum install cmake boost-devel msgpack-devel
 ```
 
+#### FreeBSD
+
+```
+$ sudo pkg install cmake boost-all msgpack
+```
+
 #### macOS
 
 ```
@@ -38,7 +44,8 @@ $ sudo make install
 ```
 
 Next, compile and run the example. If you are on a mac you should use
-the Makefile to compile.
+the Makefile to compile. If you are on FreeBSD substitute `g++` for
+`clang++`.
 
 ```
 $ g++ -std=c++11 processor.cpp -o processor -lboost_program_options -lredis3m

@@ -82,6 +82,16 @@ $ sudo yum install check check-devel redis pcre-devel zlib-devel curl-devel go
 $ sudo systemctl start redis
 ```
 
+#### FreeBSD
+
+FreeBSD 11 was used for this reference. If you are using FreeBSD keep
+in mind that all examples calling for `make` expect GNU make. You
+should substitute `make` for `gmake` at all times during the workshop.
+
+```
+$ sudo pkg install git go gmake redis pkgconf automake libtool libcheck gnupg
+```
+
 #### Installing Ruby (only for running repsheet-nginx test suite)
 
 There are a few standard ways to install Ruby. If you don't have a

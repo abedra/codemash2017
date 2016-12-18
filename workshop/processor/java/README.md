@@ -17,6 +17,12 @@ $ sudo apt-get install openjdk-8-jdk maven
 $ sudo yum install java-1.8.0-openjdk maven
 ```
 
+#### FreeBSD
+
+```
+$ sudo pkg install openjdk8-8.102.14_1 maven33-3.3.9
+```
+
 #### macOS
 
 This example requires Java 8. You will need to download the installer
