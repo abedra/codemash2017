@@ -127,7 +127,7 @@ $ rake # all tests should pass
 	</section>
 
 	<section>
-	  <h2>And our responses shouldn't be static</h2>
+	  <h2>And our security shouldn't be static</h2>
 	</section>
 
 	<section>
@@ -260,7 +260,7 @@ curl localhost:8080
 	  <pre>
 	    <code data-trim class="nohighlight">
 $ tail -f logs/app.log
-127.0.0.1 - - [22/Sep/2015:09:49:50 -0500] "GET / HTTP/1.1" 200 1400
+127.0.0.1 - - [02/Jan/2017:09:49:50 -0500] "GET / HTTP/1.1" 200 1400
 	    </code>
 	  </pre>
 	</section>
@@ -337,10 +337,10 @@ $ curl localhost:8888 # Normal app output
 	    <code data-trim class="nohighlight">
 $ cd repsheet/repsheet-nginx-4.3.0
 $ tail build/nginx/logs/error.log
-2015/09/22 14:53:01 [error] 58985#0: *4 [Repsheet] - IP 127.0.0.1
+2017/01/02 10:25:51 [error] 25726#0: *15 [Repsheet] - IP 127.0.0.1
   was blocked by repsheet. Reason: manual, client: 127.0.0.1,
   server: , request: "GET / HTTP/1.1", host: "localhost:8888"
-2015/09/22 14:53:04 [error] 58985#0: *4 [Repsheet] - IP 127.0.0.1
+2017/01/02 10:26:04 [error] 25726#0: *16 [Repsheet] - IP 127.0.0.1
   is whitelisted by repsheet. Reason: manual, client: 127.0.0.1,
   server: , request: "GET / HTTP/1.1", host: "localhost:8888"
 	    </code>
@@ -355,7 +355,7 @@ $ redis-cli flushdb
 OK
 $ redis-cli set 127.0.0.1:repsheet:ip:marked manual
 OK
-$ curl localhost:8888 # you should see the normal response
+$ curl localhost:8888 # notice the change in output
 	    </code>
 	  </pre>
 	</section>
@@ -366,9 +366,9 @@ $ curl localhost:8888 # you should see the normal response
 	    <code data-trim class="nohighlight">
 $ cd repsheet/repsheet-nginx-4.3.0
 $ tail build/nginx/logs/error.log
-2015/09/22 16:16:34 [error] 58985#0: *21 [Repsheet] - IP 127.0.0.1
-  was found on repsheet. No action taken, client: 127.0.0.1, server: ,
-  request: "GET / HTTP/1.1", host: "localhost:8888"
+2017/01/02 10:28:31 [error] 25726#0: *18 [Repsheet] - IP 127.0.0.1
+  was found on repsheet. Reason: manual, client: 127.0.0.1,
+  server: , request: "GET / HTTP/1.1", host: "localhost:8888"
 	    </code>
 	  </pre>
 	</section>
@@ -382,13 +382,13 @@ $ tail build/nginx/logs/error.log
 	  <pre>
 	    <code data-trim class="go">
 func repsheetHandler(next http.Handler) http.Handler {
-                return http.HandlerFunc(func(w http.ResponseWriter,
-                                             r *http.Request) {
-		if r.Header["X-Repsheet"] != nil {
-			context.Set(r, "repsheet", true)
-		}
-		next.ServeHTTP(w, r)
-	})
+    return http.HandlerFunc(func(w http.ResponseWriter,
+                                 r *http.Request) {
+        if r.Header["X-Repsheet"] != nil {
+	    context.Set(r, "repsheet", true)
+	}
+	next.ServeHTTP(w, r)
+    })
 }
 	    </code>
 	  </pre>
@@ -429,16 +429,16 @@ marked actors
 	  <pre>
 	    <code data-trim class="nohighlight">
 $ ./repsheet -h
-Usage of ./repsheet:
-  -blacklist="": Blacklist an actor
-  -host="localhost": Redis host
-  -list=false: Show the contents of Repsheet
-  -mark="": Mark an actor
-  -port=6379: Redis port
-  -reason="": Reason for the action
-  -status="": Get the status of an actor
-  -timeout=10: Redis connection timeout
-  -whitelist="": Whitelist an actor
+Usage of repsheet:
+  -blacklist string Blacklist an actor
+  -host string Redis host (default "localhost")
+  -list	Show the contents of Repsheet
+  -mark string Mark an actor
+  -port int Redis port (default 6379)
+  -reason string Reason for the action
+  -status string Get the status of an actor
+  -timeout int Redis connection timeout (default 10)
+  -whitelist string Whitelist an actor
 	    </code>
 	  </pre>
 	</section>
