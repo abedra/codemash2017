@@ -1,3 +1,5 @@
+extern crate getopts;
+
 use std::collections::HashMap;
 use std::path::Path;
 use std::fs::File;
@@ -5,6 +7,9 @@ use std::error::Error;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::collections::hash_map::Entry::{Vacant, Occupied};
+
+use getopts::Options;
+use std::env;
 
 fn process(entries: &mut HashMap<String, i64>, line: &str) {
     let parts: Vec<&str> = line.split(' ').collect();
@@ -20,8 +25,41 @@ fn process(entries: &mut HashMap<String, i64>, line: &str) {
     }
 }
 
+fn print_usage(program: &str, opts: Options) {
+    let brief = format!("Usage: {} FILE [options]", program);
+    print!("{}", opts.usage(&brief));
+}
+
 fn main() {
-    let path = Path::new("../../app/logs/app.log");
+    let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
+    let mut opts = Options::new();
+
+    opts.optopt("l", "logfile", "Path to log file", "PATH");
+    opts.optopt("t", "threshold", "Blacklist threshold", "THRESHOLD");
+    opts.optflag("h", "help", "Print help");
+
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m) => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+
+    if matches.opt_present("h") {
+        print_usage(&program, opts);
+        return;
+    }
+
+    let log_file = match matches.opt_str("l") {
+        Some(x) => x,
+        None => "../../app/logs/app.log".to_string(),
+    };
+
+    let threshold = match matches.opt_str("t") {
+        Some(x) => x.parse().unwrap(),
+        None => 10
+    };
+
+    let path = Path::new(&log_file);
     let file_handle = match File::open(&path) {
         Err(why) => {
             println!("Could not open {} : {}", path.display(), Error::description(&why));
@@ -41,7 +79,7 @@ fn main() {
 
     if entries.len() > 0 {
         for (address, value) in entries.iter() {
-            println!("Blacklisting {}. Actual {}, Threshold {}", address, value, 10);
+            println!("Blacklisting {}. Actual {}, Threshold {}", address, value, threshold);
         }
     }
 }
