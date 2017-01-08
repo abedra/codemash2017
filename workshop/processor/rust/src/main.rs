@@ -1,4 +1,5 @@
 extern crate getopts;
+extern crate redis;
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -10,6 +11,8 @@ use std::collections::hash_map::Entry::{Vacant, Occupied};
 
 use getopts::Options;
 use std::env;
+
+use redis::Commands;
 
 fn process(entries: &mut HashMap<String, i64>, line: &str) {
     let parts: Vec<&str> = line.split(' ').collect();
@@ -28,6 +31,11 @@ fn process(entries: &mut HashMap<String, i64>, line: &str) {
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} FILE [options]", program);
     print!("{}", opts.usage(&brief));
+}
+
+fn blacklist(connection: &redis::Connection, actor: &str, reason: &str) -> redis::RedisResult<()> {
+    let _ : () = try!(connection.set(format!("{}:repsheet:ip:blacklisted", actor), reason));
+    Ok(())
 }
 
 fn main() {
@@ -55,8 +63,8 @@ fn main() {
     };
 
     let threshold = match matches.opt_str("t") {
-        Some(x) => x.parse().unwrap(),
-        None => 10
+        Some(x) => x.parse::<i64>().unwrap(),
+        None => 10,
     };
 
     let path = Path::new(&log_file);
@@ -78,8 +86,14 @@ fn main() {
     }
 
     if entries.len() > 0 {
+        let client = redis::Client::open("redis://127.0.0.1").unwrap();
+        let connection = client.get_connection().unwrap();
+
         for (address, value) in entries.iter() {
-            println!("Blacklisting {}. Actual {}, Threshold {}", address, value, threshold);
+            if value > &threshold {
+                let _ = blacklist(&connection, address, "Login Attack");
+                println!("Blacklisting {}. Actual {}, Threshold {}", address, value, threshold);
+            }
         }
     }
 }
